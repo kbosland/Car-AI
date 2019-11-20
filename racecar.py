@@ -144,7 +144,7 @@ class Car(pygame.sprite.Sprite):
         adj = SSENSOR_LEN * math.cos(math.radians(angle))
         end = (start[0] - int(opp), start[1] - int(adj))
         return pygame.draw.line(DISPLAY, (255, 255, 255), start, end)
-    
+
     def drawUpdatedSensor (self, angle):
         start = self.rect.center
         angle = - self.angle + angle
@@ -201,7 +201,7 @@ class Car(pygame.sprite.Sprite):
         adj = SSENSOR_LEN * math.cos(math.radians(angle))
         end = (start[0] - int(opp), start[1] - int(adj))
         return end
-    
+
     def getLsensorEnd (self):
         start = self.rect.center
         angle = - self.angle + 90
@@ -290,7 +290,7 @@ class Car(pygame.sprite.Sprite):
         adj = SSENSOR_LEN * math.cos(math.radians(angle))
         end = (start[0] - int(opp), start[1] - int(adj))
         return end
-        
+
     def update(self):
         self.updateSensor()
         keys = pygame.key.get_pressed()
@@ -313,7 +313,7 @@ class Car(pygame.sprite.Sprite):
             self.direction = 1
         elif self.angle > 90 and self.angle < 270:
             self.direction = -1
-        
+
         self.position += self.vel
         self.rect.center = self.position
 
@@ -375,7 +375,7 @@ def checkSensors ():
                 [car.rect.center, car.getFRLsensorEnd(), "FRL"], [car.rect.center, car.getFRRsensorEnd(), "FRR"],
                 [car.rect.center, car.getBRsensorEnd(), "BR"], [car.rect.center, car.getBLsensorEnd(), "BL"],
                 [car.rect.center, car.getBRLsensorEnd(), "BR"], [car.rect.center, car.getBLRsensorEnd(), "BL"] ]
-    
+
     poiResults = {}
 
     for line in allBounds:
@@ -413,11 +413,11 @@ def autoCorrect():
         if (getFrontDist(data) < FSENSOR_LEN * 0.85):
             car.slowDown()
 
-    if (not frontTriggered(data)):
+    turn = isTurnComingUp(data)
+    if (turn == "STRAIGHT"):
         car.goFaster()
         pass
     else:
-        car.slowDown()
         turn = isTurnComingUp(data)
         if (turn == "RIGHT"):
             car.rotateRight()
@@ -439,11 +439,11 @@ def isTurnComingUp (data):
     for sensor in rSensors:
         if sensor in data:
             rightSide += 1
-    
+
     for sensor in lSensors:
         if sensor in data:
             leftSide += 1
-        
+
     if (rightSide > leftSide):
         return "RIGHT"
     elif (leftSide > rightSide):
@@ -481,7 +481,7 @@ def gatePassed ():
                 exitedGateZone = False
 
         inGateZone = not exitedGateZone
-                    
+
 def frontTriggered (data):
     if ("F" in data):
         return True
@@ -570,4 +570,4 @@ while True:
     colliding()
     pygame.display.set_caption('Velocity {}'.format(car.vel))
     pygame.display.update()
-    fps_clock.tick(FPS)
+    fps_clock.tick(FPS) 
